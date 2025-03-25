@@ -1,0 +1,35 @@
+---
+title: "Outline Wayne"
+output: html_document
+date: "2025-03-25"
+---
+
+
+## Outline
+
+Data cleaning
+  Making dummy variables
+
+Exploratory Analysis
+
+Model Training
+  Cross Validation
+  GAM
+  MARS
+  Linear Regression
+  Elastic Net
+  Select via cross validated RMSE?
+  Look at the plots!
+  
+Model Evaluation
+  RMSE
+  Distribution of residuals
+  Compare the summary statistics between the two samples. 
+  
+
+
+# Project
+
+## Data Cleaning
+
+Making dummy variables

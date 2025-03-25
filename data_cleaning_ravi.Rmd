@@ -1,0 +1,51 @@
+---
+title: "data_cleaning_ravi"
+author: "Ravi Brenner"
+date: "2025-03-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(caret)
+library(tidymodels)
+```
+
+```{r}
+load("dat1.RData")
+load("dat2.RData")
+```
+
+Go from labels to variable names
+```{r}
+dat1 <- dat1 |>
+  mutate(gender = factor(gender, levels = c(0,1),
+                         labels = c("Female","Male")),
+         race = factor(race, levels = c(1,2,3,4),
+                       labels = c("White","Asian","Black","Hispanic")),
+         smoking = factor(smoking, levels = c(0,1,2),
+                          labels = c("Never smoked","Former smoker","Current smoker")),
+         diabetes = factor(diabetes, levels = c(0,1),
+                           labels = c("No","Yes")),
+         hypertension = factor(hypertension, levels = c(0,1),
+                               labels = c("No","Yes")),
+         )
+
+dat2 <- dat2 |>
+  mutate(gender = factor(gender, levels = c(0,1),
+                         labels = c("Female","Male")),
+         race = factor(race, levels = c(1,2,3,4),
+                       labels = c("White","Asian","Black","Hispanic")),
+         smoking = factor(smoking, levels = c(0,1,2),
+                          labels = c("Never smoked","Former smoker","Current smoker")),
+         diabetes = factor(diabetes, levels = c(0,1),
+                           labels = c("No","Yes")),
+         hypertension = factor(hypertension, levels = c(0,1),
+                               labels = c("No","Yes")),
+         )
+```
+
+

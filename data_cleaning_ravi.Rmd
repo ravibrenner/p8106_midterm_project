@@ -32,7 +32,8 @@ dat1 <- dat1 |>
                            labels = c("No","Yes")),
          hypertension = factor(hypertension, levels = c(0,1),
                                labels = c("No","Yes")),
-         )
+         ) |>
+  dplyr::select(-id)
 
 dat2 <- dat2 |>
   mutate(gender = factor(gender, levels = c(0,1),
@@ -45,7 +46,24 @@ dat2 <- dat2 |>
                            labels = c("No","Yes")),
          hypertension = factor(hypertension, levels = c(0,1),
                                labels = c("No","Yes")),
-         )
+         ) |>
+  dplyr::select(-id)
+```
+
+Use featureplot from caret to plot the training data
+```{r}
+featurePlot(x = dat1 |> dplyr::select(-log_antibody,
+                                      -where(is.factor)),
+            y = dat1$log_antibody)
+
+dat1 |> 
+  dplyr::select(log_antibody,gender,race, smoking,diabetes, hypertension) |>
+  pivot_longer(cols = 2:6,
+               names_to = "variable",
+               values_to = "value") |>
+  ggplot(aes(y = value, x = log_antibody)) + 
+  geom_boxplot() +
+  facet_wrap(.~variable)
 ```
 
 

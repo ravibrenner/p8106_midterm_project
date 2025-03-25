@@ -8,17 +8,20 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
+library(vtable)
+library(corrplot)
 ```
 
 ```{r}
-
+load("./dat1.RData")
+antibodies = dat1
 
 antibody_hist = hist(antibodies$log_antibody)
 antibody_scatter = plot(x = antibodies$time, y = antibodies$log_antibody)
-antibody
 summ_table = sumtable(antibodies, out = 'return')
-
-
+continuous = antibodies[c(2,6:8,11:13)]
+correlations = cor(continuous)
+corr_plot = corrplot(correlations)
 
 
 

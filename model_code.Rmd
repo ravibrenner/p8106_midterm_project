@@ -23,6 +23,7 @@ continuous = antibodies[c(2,6:8,11:13)]
 correlations = cor(continuous)
 corr_plot = corrplot(correlations)
 
-
+report_table = sumtable(antibodies, out = 'kable')
+report_table
 
 ```

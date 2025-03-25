@@ -52,9 +52,17 @@ dat2 <- dat2 |>
 
 Use featureplot from caret to plot the training data
 ```{r}
+theme1 <- trellis.par.get()
+theme1$plot.symbol$col = rgb(.2, .2, .2, .4)
+theme1$plot.symbol$pch = 16
+theme1$plot.line$col = rgb(1, 0, 0, .7)
+theme1$plot.line$lwd <- 2
+trellis.par.set(theme1)
+
 featurePlot(x = dat1 |> dplyr::select(-log_antibody,
                                       -where(is.factor)),
-            y = dat1$log_antibody)
+            y = dat1$log_antibody,
+            type = c("p","smooth"))
 
 dat1 |> 
   dplyr::select(log_antibody,gender,race, smoking,diabetes, hypertension) |>

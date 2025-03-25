@@ -16,6 +16,7 @@ library(caret)
 library(tidymodels)
 library(vtable)
 library(corrplot)
+library(patchwork)
 ```
 
 ```{r}
@@ -92,3 +93,19 @@ report_table
 
 
 ```
+
+# Looking at the second dataset
+
+```{r}
+
+antibody_hist = hist(dat1$log_antibody)
+antibody_hist_data2 = hist(dat2$log_antibody)
+
+summ_table_data2 = sumtable(dat2, out = 'return')
+
+
+
+```
+
+
+

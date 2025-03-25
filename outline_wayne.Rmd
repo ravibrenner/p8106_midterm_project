@@ -121,7 +121,9 @@ model.elastic_net =
         y = y,
         method = "glmnet", 
         metric = "RMSE",
-        trControl = ctrl)
+        trControl = ctrl,
+        tuneGrid = expand.grid(.alpha = seq(0,1, length = 21),
+                               .lambda = exp(seq(6,0, length = 100))))
 
 hist(model.elastic_net$resample$RMSE)
 ```
@@ -197,9 +199,24 @@ model.RMSE=
     RMSE = model.mars$resample$RMSE
   )
 )
+```
+
+
+```{r}
+model.RMSE %>% 
+  group_by(model) %>% 
+  summarize(mean(RMSE))
+```
+
+
+```{r}
 
 model.RMSE |>
   ggplot(aes(x = model, y = RMSE)) +
-  geom_violin()
+  geom_violin()+
+  stat_summary(
+    fun = "mean",
+               geom = "point",
+               color = "red")
 ```
 

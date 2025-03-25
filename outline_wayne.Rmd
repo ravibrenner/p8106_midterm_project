@@ -32,4 +32,33 @@ Model Evaluation
 
 ## Data Cleaning
 
+```{r}
+library(tidyverse)
+```
+
+
 Making dummy variables
+```{r}
+load('dat1.RData')
+```
+
+
+```{r}
+design_matrix = 
+  dat1 |>
+  mutate(
+    race_asian = as.numeric(race == 2),
+    race_black = as.numeric(race == 3),
+    race_hispanic = as.numeric(race == 4),
+    smoking_former = as.numeric(smoking == 1),
+    smoking_current = as.numeric(smoking ==2)
+  ) %>% 
+  select(
+    age, gender, race_asian, race_black, race_hispanic, 
+    smoking_former, smoking_current, height, weight,
+    bmi, diabetes, hypertension, SBP, LDL, time, 
+    log_antibody
+  )
+```
+
+

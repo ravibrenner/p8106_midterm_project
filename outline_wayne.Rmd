@@ -220,3 +220,40 @@ model.RMSE |>
                color = "red")
 ```
 
+
+
+## Model Evaluation
+
+Load new data
+```{r}
+load('dat2.RData')
+```
+
+Clean data
+```{r}
+design_matrix2 = 
+  dat2 |>
+  mutate(
+    race_asian = as.numeric(race == 2),
+    race_black = as.numeric(race == 3),
+    race_hispanic = as.numeric(race == 4),
+    smoking_former = as.numeric(smoking == 1),
+    smoking_current = as.numeric(smoking ==2)
+  ) %>% 
+  select(
+    age, gender, race_asian, race_black, race_hispanic, 
+    smoking_former, smoking_current, height, weight,
+    bmi, diabetes, hypertension, SBP, LDL, time, 
+    log_antibody
+  )
+```
+
+
+```{r}
+x2 = as.matrix(select(design_matrix2, -log_antibody))
+y2 = design_matrix$log_antibody
+
+sqrt(mean((predict(model.mars, x2)[,1] - y2)^2))
+```
+
+

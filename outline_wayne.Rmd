@@ -110,6 +110,9 @@ model.linear =
 hist(model.linear$resample$RMSE)
 ```
 
+```{r}
+model.linear$
+```
 
 
 
@@ -126,6 +129,11 @@ model.elastic_net =
                                .lambda = exp(seq(6,0, length = 100))))
 
 hist(model.elastic_net$resample$RMSE)
+```
+
+
+```{r}
+model.elastic_net$
 ```
 
 
@@ -190,10 +198,10 @@ model.RMSE=
   data.frame(
     model = 'Elastic Net',
     RMSE = model.elastic_net$resample$RMSE),
-  # data.frame(
-  #  model = 'linear',
-  #  RMSE = model.linear$resample$RMSE
-  #),
+  data.frame(
+    model = 'GAM',
+    RMSE = model.gam$resample$RMSE
+  ),
   data.frame(
     model = 'MARS',
     RMSE = model.mars$resample$RMSE

@@ -111,8 +111,9 @@ hist(model.linear$resample$RMSE)
 ```
 
 ```{r}
-model.linear$
+coef(model.linear$finalModel)
 ```
+
 
 
 
@@ -129,11 +130,6 @@ model.elastic_net =
                                .lambda = exp(seq(6,0, length = 100))))
 
 hist(model.elastic_net$resample$RMSE)
-```
-
-
-```{r}
-model.elastic_net$
 ```
 
 
@@ -165,6 +161,11 @@ model.gam =
 
 
 
+```{r}
+plot(model.gam)
+```
+
+
 MARS
 ```{r}
 mars_grid = 
@@ -180,10 +181,6 @@ model.mars =
 
 ggplot(model.mars)
 ```
-```{r}
-hist(mars.fit$resample$RMSE)
-```
-
 
 
 ## Comparing Cross Validated RMSE
@@ -254,14 +251,15 @@ design_matrix2 =
     bmi, diabetes, hypertension, SBP, LDL, time, 
     log_antibody
   )
+
+x2 = as.matrix(select(design_matrix2, -log_antibody))
+y2 = design_matrix2$log_antibody
 ```
 
 
 ```{r}
-x2 = as.matrix(select(design_matrix2, -log_antibody))
-y2 = design_matrix$log_antibody
+pred = predict(model.gam, x2)
 
-sqrt(mean((predict(model.mars, x2)[,1] - y2)^2))
+sqrt(mean((pred - y2)^2))
 ```
-
 

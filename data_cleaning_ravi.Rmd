@@ -12,6 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(caret)
 library(tidymodels)
+library(vtable)
+library(corrplot)
 ```
 
 ```{r}
@@ -74,4 +76,17 @@ dat1 |>
   facet_wrap(.~variable)
 ```
 
+```{r}
 
+antibody_hist = hist(dat1$log_antibody)
+antibody_scatter = plot(x = dat1$time, y = dat1$log_antibody)
+summ_table = sumtable(dat1, out = 'return')
+continuous = dat1[c(1,5:7,10:12)]
+correlations = cor(continuous)
+corr_plot = corrplot(correlations)
+
+report_table = sumtable(dat1, out = 'kable')
+report_table
+
+
+```

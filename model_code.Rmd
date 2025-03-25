@@ -1,0 +1,25 @@
+---
+title: "model_code"
+author: "team"
+date: "2025-03-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+```
+
+```{r}
+
+
+antibody_hist = hist(antibodies$log_antibody)
+antibody_scatter = plot(x = antibodies$time, y = antibodies$log_antibody)
+antibody
+summ_table = sumtable(antibodies, out = 'return')
+
+
+
+
+
+```

@@ -179,14 +179,14 @@ model.elastic_net =
         metric = "RMSE",
         trControl = ctrl,
         tuneGrid = expand.grid(.alpha = seq(0,1, length = 21),
-                               .lambda = exp(seq(6,0, length = 100))))
+                               .lambda = exp(seq(6,-10, length = 100))))
 
 hist(model.elastic_net$resample$RMSE)
 ```
 
 
 ```{r}
-plot(model.elastic_net)
+plot(model.elastic_net, xTrans = log)
 ```
 
 
@@ -305,9 +305,9 @@ head(x2)
 ```
 
 
-Make predictions and get test set RMSE
+Make predictions using MARS model and get test set RMSE
 ```{r}
-pred = predict(model.gam, x2)
+pred = predict(model.mars, x2)
 
 dat2_rmse = sqrt(mean((pred - y2)^2))
 

@@ -1,42 +1,25 @@
 ---
-title: "Outline Wayne"
-output: html_document
+title: "Midterm Project"
+author: "Ravi Brenner, Cameron Chesbrough, Wayne Monical"
 date: "2025-03-25"
+output: pdf_document
 ---
 
 
-## Outline
-
-Data cleaning
-  Making dummy variables
-
-Exploratory Analysis
-  Check for missing vals
-  Summary stats
-
-Model Training
-  Cross Validation
-  GAM
-  MARS
-  Linear Regression
-  Elastic Net
-  Select via cross validated RMSE?
-  Look at the plots!
-  
-Model Evaluation
-  RMSE
-  Distribution of residuals
-  Compare the summary statistics between the two samples. 
-  
 
 
-# Project
 
-## Data Cleaning
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
+Library Load
 ```{r}
 library(caret)
 library(tidymodels)
+library(vtable)
+library(corrplot)
+library(patchwork)
 library(splines)
 library(mgcv)
 library(pdp)
@@ -46,14 +29,99 @@ library(ggplot2)
 library(glmnet)
 ```
 
-
-Making dummy variables
+Loading data
 ```{r}
-load('dat1.RData')
+load("dat1.RData")
+load("dat2.RData")
+```
+
+## Exploratory Data Analysis
+
+Go from labels to variable names
+```{r}
+dat1 <- dat1 |>
+  mutate(gender = factor(gender, levels = c(0,1),
+                         labels = c("Female","Male")),
+         race = factor(race, levels = c(1,2,3,4),
+                       labels = c("White","Asian","Black","Hispanic")),
+         smoking = factor(smoking, levels = c(0,1,2),
+                          labels = c("Never smoked","Former smoker","Current smoker")),
+         diabetes = factor(diabetes, levels = c(0,1),
+                           labels = c("No","Yes")),
+         hypertension = factor(hypertension, levels = c(0,1),
+                               labels = c("No","Yes")),
+         ) |>
+  dplyr::select(-id)
+
+dat2 <- dat2 |>
+  mutate(gender = factor(gender, levels = c(0,1),
+                         labels = c("Female","Male")),
+         race = factor(race, levels = c(1,2,3,4),
+                       labels = c("White","Asian","Black","Hispanic")),
+         smoking = factor(smoking, levels = c(0,1,2),
+                          labels = c("Never smoked","Former smoker","Current smoker")),
+         diabetes = factor(diabetes, levels = c(0,1),
+                           labels = c("No","Yes")),
+         hypertension = factor(hypertension, levels = c(0,1),
+                               labels = c("No","Yes")),
+         ) |>
+  dplyr::select(-id)
+```
+
+Use featureplot from caret to plot the training data
+```{r}
+theme1 <- trellis.par.get()
+theme1$plot.symbol$col = rgb(.2, .2, .2, .4)
+theme1$plot.symbol$pch = 16
+theme1$plot.line$col = rgb(1, 0, 0, .7)
+theme1$plot.line$lwd <- 2
+trellis.par.set(theme1)
+
+featurePlot(x = dat1 |> dplyr::select(-log_antibody,
+                                      -where(is.factor)),
+            y = dat1$log_antibody,
+            type = c("p","smooth"))
+
+dat1 |> 
+  dplyr::select(log_antibody,gender,race, smoking,diabetes, hypertension) |>
+  pivot_longer(cols = 2:6,
+               names_to = "variable",
+               values_to = "value") |>
+  ggplot(aes(y = value, x = log_antibody)) + 
+  geom_boxplot() +
+  facet_wrap(.~variable)
+```
+
+```{r}
+
+antibody_hist = hist(dat1$log_antibody)
+antibody_scatter = plot(x = dat1$time, y = dat1$log_antibody)
+summ_table = sumtable(dat1, out = 'return')
+continuous = dat1[c(1,5:7,10:12)]
+correlations = cor(continuous)
+corr_plot = corrplot(correlations)
+
+report_table = sumtable(dat1, out = 'kable')
+report_table
+
+
+```
+
+Looking at the second dataset
+```{r}
+antibody_hist = hist(dat1$log_antibody)
+antibody_hist_data2 = hist(dat2$log_antibody)
+
+summ_table_data2 = sumtable(dat2, out = 'return')
 ```
 
 
+## Model Training
+
+Creating the design Matrix
 ```{r}
+load('dat1.RData')
+
 design_matrix = 
   dat1 |>
   mutate(
@@ -70,19 +138,6 @@ design_matrix =
     log_antibody
   )
 ```
-
-
-## Model Training
-
-Cross Validation
-  GAM
-  MARS
-  Linear Regression
-  Elastic Net
-  Select via cross validated RMSE?
-  Look at the plots!
-  
-  
   
 Specify X and Y for model training
 ```{r}
@@ -95,7 +150,6 @@ Specify CV Procedure
 ```{r}
 ctrl <- trainControl(method = "cv", number = 10)
 ```
-
 
 Linear Regression
 ```{r}
@@ -113,8 +167,6 @@ hist(model.linear$resample$RMSE)
 ```{r}
 coef(model.linear$finalModel)
 ```
-
-
 
 
 Elastic Net
@@ -140,14 +192,7 @@ plot(model.elastic_net)
 
 
 GAM
-
-Im not running this right now, because it takes too long
 ```{r}
-# train a GAM model using caret
-## CITE FROM LECTURE
-
-# set up cross validation control
-
 set.seed(1)
 model.gam =
   train(x = x,
@@ -155,11 +200,7 @@ model.gam =
         method = "gam", 
         metric = "RMSE",
         trControl = ctrl)
-
-
 ```
-
-
 
 ```{r}
 plot(model.gam)
@@ -228,16 +269,12 @@ model.RMSE |>
 ```
 
 
-
 ## Model Evaluation
 
-Load new data
+Clean new data set
 ```{r}
 load('dat2.RData')
-```
 
-Clean data
-```{r}
 design_matrix2 = 
   dat2 |>
   mutate(
@@ -254,11 +291,20 @@ design_matrix2 =
     log_antibody
   )
 
-x2 = as.matrix(select(design_matrix2, -log_antibody))
+x2 = as.matrix(dplyr::select(design_matrix2, -log_antibody))
 y2 = design_matrix2$log_antibody
 ```
 
 
+```{r}
+head(x)
+```
+```{r}
+head(x2)
+```
+
+
+Make predictions and get test set RMSE
 ```{r}
 pred = predict(model.gam, x2)
 
@@ -266,28 +312,3 @@ dat2_rmse = sqrt(mean((pred - y2)^2))
 
 dat2_rmse
 ```
-
-
-
-```{r}
-model.gam$resample$RMSE %>% min()
-```
-
-
-```{r}
-model.gam$resample$RMSE %>% max()
-```
-
-
-```{r}
-(dat2_rmse - mean(model.gam$resample$RMSE)) /  sd(model.gam$resample$RMSE)
-```
-
-
-
-```{r}
-IQR(model.gam$resample$RMSE)
-```
-
-
-
